@@ -12,10 +12,10 @@ Flexible Scheduling: Set habits for specific days of the week or repeat daily.
 
 ## Technologies Used
 
-Frontend: HTML, CSS, JavaScript, Bootstrap, Chart.js 
-Backend: Django 
-Database: SQLite 
-Authentication: Django default authentication.
+Frontend: HTML, CSS, JavaScript, Bootstrap, Chart.js  
+Backend: Django  
+Database: SQLite  
+Authentication: Django default authentication.  
 Deployment: [Platform Used: Python-Anywhere]  
 
 ## Project Live Link
