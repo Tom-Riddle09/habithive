@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}HabitHive{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1">
+    </head>
+    <body>
+        <header class="header">
+            <h1>Habit-Hive</h1>
+            <p>A place where habits grow and thrive.</p>
+            <nav>
+                <ul class="nav-links">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'habits:dashboard' %}" class="btn btn-dashboard">Dashboard</a></li> <!--[habits:dashboard]-->
+                        <li><a href="{% url 'users:logout' %}" class="btn btn-logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'users:register' %}" class="btn btn-signup">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+            <p>&copy; 2024 Habit-Hive</p>
+        </footer>
+    </body>
+</html>

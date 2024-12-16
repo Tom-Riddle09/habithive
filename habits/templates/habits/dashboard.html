@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'habits/css/styles.css' %}?v=4">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<div class="dashboard-container">
+    <!-- Notifications -->
+    <div class="notifications">
+        {% if notifications or reminder_habits %}
+        {% for notification in notifications %}
+        <b style="color: #13b12a;">{{ notification }}</b>
+        {% endfor %}
+        {% for reminder in reminder_habits %}
+        <b style="color: #e31919;">{{ reminder }}</b>
+        {% endfor %}
+        {% else %}
+        <b>{{ motivational_message }}</b>
+        {% endif %}
+    </div>
+
+    <!-- Section 1: Overview -->
+    <div class="overview">
+        <h3>Your Habits Overview</h3>
+        <div class="pie-chart-section">
+            {% if category_labels and category_values %}
+                <canvas id="pieChart"></canvas>
+            {% else %}
+                <p>No data to display.</p>
+            {% endif %}
+        </div>
+        <div class="overview-titles">
+            <h3> Your Profile </h3>
+            <p><b>Total Active Habits:</b> {{ total_habits }}</p>
+            <p><b>Habit Gems Collected:</b> {{ habit_gems }}</p>
+            <p><b>Highest Streak:</b> {{ highest_streak }}</p>
+            <a href="{% url 'analytics:overall_analytics' %}" class="btn">Analytics</a> <!--[analytics:analytics_dash]-->
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('pieChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: {{ category_labels|safe|default:"[]" }},
+                    datasets: [{
+                        data: {{ category_values|safe|default:"[]" }},
+                        backgroundColor: ['#FF5733', '#33FF57', '#3357FF','#FF33A6','#57FF33','#5733FF','#33FFA6','#FF5733','#33A6FF','#A633FF','#FF33C1'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    var dataset = tooltipItem.chart.data.datasets[0];
+                                    var total = dataset.data.reduce(function(previousValue, currentValue) {
+                                        return previousValue + currentValue;
+                                    }, 0);
+                                    var currentValue = dataset.data[tooltipItem.dataIndex];
+                                    var percentage = Math.floor(((currentValue / total )* 100) + 0.5); 
+                                    return ' ' + percentage + '%'; 
+                                }
+                            }
+                        },
+                        datalabels: {
+                            formatter: function(value, ctx) {
+                                var total = 0;
+                                ctx.chart.data.datasets[0].data.forEach(function(item) {
+                                    total += item;
+                                });
+                                var percentage = (value/total * 100).toFixed(2) + '%';
+                                return percentage;
+                            },
+                            color: '#fff',
+                            anchor: 'center',
+                            align: 'center'
+                        }
+                    }
+                }
+            });
+
+            setTimeout(function() {
+                var alert = document.querySelector('.notifications');
+                if (alert) {
+                    alert.style.opacity = 0;
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 1000);
+                }
+            }, 7000);
+        });
+    </script>
+
+    <!-- Section 2: Recent Progress -->
+    <div class="recent-progress">
+        <h3>Your Recent Habits</h3>
+        <div class="progress-bars">
+            {% for item in progress_data %}
+            <div class="progress-item">
+                <p>{{ item.habit.name }}</p>
+                <p style="text-align: right;">{{ item.progress }}%</p>
+                <div class="progress-bar" style="width: {{ item.progress }}%;"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Section 3: Habit Cards -->
+    <div class="habit-cards">
+        <h3>Your Habits</h3>
+        <div class="cards-carousel">
+            {% for habit in habit_cards %}
+            <div class="habit-card">
+                <div class="card-image" style="background-image: url('/static/habits/images/{{ habit.category }}.jpg');"></div>
+                <div class="card-content">
+                    <h4>{{ habit.name }}</h4>
+                    <a href="{% url 'habits:mark_log' habit.id %}" class="btn">Mark Progress</a> <!--'habits:mark_log' habit.id-->
+                    <a href="{% url 'analytics:habit_analytics' habit.id %}" class="btn">Habit Analytics</a> <!--'analytics:habit_analytics' habit.id-->
+                    <a href="{% url 'habits:delete_habit' habit.id %}" class="btn" style="background-color: #e31919;">Delete Habit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'habits:create_habit' %}" class="btn add-habit">Add New Habit</a>
+    </div>
+</div>
+
+
+{% endblock %}

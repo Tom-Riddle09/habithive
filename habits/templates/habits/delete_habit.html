@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Habit{% endblock %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'habits/css/styles.css' %}">
+<div class="delete-account-container">
+    <h2>Delete {{ habit.name }}</h2>
+    <p class="warning">
+        Notice: Deleting this habit will mark it as inactive, but your data will remain intact.
+    </p>
+    <form method="post" action="{% url 'habits:delete_habit' habit.id %}">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn-delete">Delete Habit</button>
+            <a href="{% url 'habits:dashboard' %}" class="btn-cancel">Cancel</a> <!-- [habits:dashboard]-->
+        </div>
+    </form>
+</div>
+{% endblock %}

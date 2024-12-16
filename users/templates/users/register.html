@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'users/css/authenticate.css' %}?v=1">
+<div class="form-container">
+    <h2>Create an Account</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Display general form errors -->
+        {% if form.non_field_errors %}
+        <div class="form-error general-error">
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ form.username.value|default_if_none:'' }}" required>
+            {% if form.username.errors %}
+            <div class="form-error">
+                {% for error in form.username.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ form.email.value|default_if_none:'' }}" required>
+            {% if form.email.errors %}
+            <div class="form-error">
+                {% for error in form.email.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="password1">Password</label>
+            <input type="password" id="password1" name="password1" required>
+            {% if form.password1.errors %}
+            <div class="form-error">
+                {% for error in form.password1.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="password2">Confirm Password</label>
+            <input type="password" id="password2" name="password2" required>
+            {% if form.password2.errors %}
+            <div class="form-error">
+                {% for error in form.password2.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit">Sign Up</button>
+    </form>
+    <p class="form-footer">Already have an account? <a href="{% url 'users:login' %}">Log In</a></p>
+</div>
+{% endblock %}

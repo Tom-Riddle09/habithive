@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Habit Log{% endblock %}
+{% block content %}
+<div class="log-container">
+    <h2>Mark progress for :{{ habit.name }}</h2>
+    <p class="info">
+        {{message}}
+    </p>
+    <form method="post" action="{% url 'habits:mark_log' habit.id %}">
+        {% csrf_token %}
+        <div class="form-actions">
+            <input type="hidden" name="reset_and_log" value="{{ flag }}">
+            <button type="submit" class="btn-confirm">Confirm</button>
+            <a href="{% url 'habits:dashboard' %}" class="btn-cancel">Cancel</a> <!-- [habits:dashboard]-->
+        </div>
+    </form>
+</div>
+<style>
+    
+/* delete account css */
+.log-container {
+    background: white;
+    padding: 2rem;
+    margin: 2rem auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    text-align: center;
+}
+
+.log-container h2 {
+    color: #f97400;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.log-container .info {
+    color: #ff7700;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.log-container .form-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.btn-confirm {
+    background-color: #3ce742;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-confirm:hover {
+    background-color: #30c735;
+}
+
+.btn-cancel {
+    background-color: #ef1919;
+    color: #ffffff;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background-color: #cc1616;
+}
+</style>
+{% endblock %}

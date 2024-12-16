@@ -1,0 +1,105 @@
+<!-- overall_analytics.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'analytics/css/overall.css' %}?v=2">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <h1 style="text-align: center;">Your Overall Habit Analytics</h1>
+    <p style="text-align: center;">Track your habit completion statistics, streaks, and activity trends.</p>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h2>Total Completed Days</h2>
+            <p>{{ overall_data.total_completed_days }}</p>
+        </div>
+        <div class="stat-card">
+            <h2>Total Habits Completed</h2>
+            <p>{{ overall_data.total_habits_completed }}</p>
+        </div>
+        <div class="stat-card">
+            <h2>Highest Streak</h2>
+            <p>{{ overall_data.highest_streak }} days</p>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <canvas id="completionChart"></canvas>
+    </div>
+
+    <!-- Activity Graph -->
+    <div class="graph">
+        <canvas id="activityChart"></canvas>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Data for Completion Chart
+        const completionChartCtx = document.getElementById('completionChart').getContext('2d');
+        const completionData = {
+            labels: ['Completed', 'Missed'],
+            datasets: [{
+                data: [{{ overall_data.total_completed_days }}, {{ overall_data.total_missed_days }}], // Example data: Adjust dynamically from backend
+                backgroundColor: ['#4CAF50', '#f44336'],
+                hoverOffset: 4
+            }]
+        };
+
+        new Chart(completionChartCtx, {
+            type: 'doughnut',
+            data: completionData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Data for Activity Chart
+        const activityChartCtx = document.getElementById('activityChart').getContext('2d');
+        const activityData = {
+            labels: {{ date_list|safe }}, // Example: Adjust dynamically
+            datasets: [{
+                label: 'Activity Log',
+                data: {{ count_list|safe }}, // Example data
+                borderColor: '#4CAF50',
+                fill: false,
+                tension: 0.3
+            }]
+        };
+
+        new Chart(activityChartCtx, {
+            type: 'line',
+            data: activityData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Completion Count'
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+{% endblock %}
